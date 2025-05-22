@@ -7,6 +7,7 @@ import { NextAuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
 
+// Extend session and user types
 declare module "next-auth" {
   interface Session {
     user: {
@@ -54,12 +55,17 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
+          const jwtSecret = process.env.JWT_SECRET;
+          if (!jwtSecret) {
+            throw new Error("JWT_SECRET is not defined in environment variables");
+          }
+
           const token = jwt.sign(
             { id: user.id, username: user.username },
-            process.env.JWT_SECRET,
+            jwtSecret,
             { expiresIn: "1h" }
           );
-          
+
           return {
             id: user.id.toString(),
             username: user.username,
