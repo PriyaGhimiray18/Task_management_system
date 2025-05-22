@@ -7,26 +7,6 @@ import { NextAuthOptions } from "next-auth";
 
 const prisma = new PrismaClient();
 
-// Extend session and user types
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      username: string;
-      token: string;
-      name?: string;
-      email?: string;
-      image?: string;
-    };
-  }
-
-  interface User {
-    id: string;
-    username: string;
-    token: string;
-  }
-}
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -50,7 +30,6 @@ export const authOptions: NextAuthOptions = {
           }
 
           const isValid = await bcrypt.compare(credentials.password, user.password);
-
           if (!isValid) {
             return null;
           }
